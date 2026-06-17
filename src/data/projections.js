@@ -10,17 +10,17 @@ export default [
   //     scale: [1, 1, 1],
   //   },
   // },
-  // {
-  //   name: "Gall 2",
-  //   path: "models/Gall 2.ply",
-  //   image: "images/Gall 2.jpg",
-  //   fov: 43.66,
-  //   transform: {
-  //     position: [70.82, 2.9, 2.47],
-  //     rotation: [0.3408, 1.1466, -0.3405],
-  //     scale: [2.61, 2.61, 2.61],
-  //   },
-  // },
+  {
+    name: "Gall 2",
+    path: "models/Gall 2.ply",
+    image: "images/Gall 2.jpg",
+    fov: 43.66,
+    transform: {
+      position: [70.82, 2.9, 2.47],
+      rotation: [0.3408, 1.1466, -0.3405],
+      scale: [2.61, 2.61, 2.61],
+    },
+  },
   {
     name: "Gall 3",
     path: "models/Gall 3.ply",
@@ -65,52 +65,52 @@ export default [
   //     scale: [1.46, 1.46, 1.46],
   //   },
   // },
-  {
-    name: "Säulenhalle Decke",
-    path: "models/Säulenhalle Decke.ply",
-    image: "images/Säulenhalle Decke.jpg",
-    fov: 43.22837,
-    transform: {
-      position: [-29.981536611355637, 0.8000000000000681, 23.076471941522442],
-      rotation: [1.1780253776398548, -1.290981559176644, 1.1638012614052615],
-      scale: [1.67, 1.67, 1.67],
-    },
-  },
-  {
-    name: "Säulenhalle Innensäulen",
-    path: "models/Säulenhalle Innensäulen.ply",
-    image: "images/Säulenhalle Innensäulen.jpg",
-    fov: 24.616032,
-    transform: {
-      position: [-28.19201895407154, 0.5999999999998437, 24.705276916647115],
-      rotation: [2.8974459240641193, -0.8069142741496796, 2.9251997864012367],
-      scale: [1, 1, 1],
-    },
-  },
-  {
-    name: "Säulenhalle Seite",
-    path: "models/Säulenhalle Seite.ply",
-    image: "images/Säulenhalle Seite.jpg",
-    fov: 33.096605,
-    transform: {
-      position: [-19.086429085463013, 0.22429999999974182, 46.80030846711104],
-      rotation: [
-        0.3660541432364356, 0.016807677946267495, -0.05182080468966712,
-      ],
-      scale: [1.14, 1.14, 1.14],
-    },
-  },
   // {
-  //   name: "Kennedy 1963",
-  //   path: "models/Kennedy 1963.ply",
-  //   image: "images/Kennedy 1963.jpg",
-  //   fov: 46.808396,
+  //   name: "Säulenhalle Decke",
+  //   path: "models/Säulenhalle Decke.ply",
+  //   image: "images/Säulenhalle Decke.jpg",
+  //   fov: 43.22837,
   //   transform: {
-  //     position: [-84.90858839834449, 5.599999999999741, -5.026112292179066],
-  //     rotation: [-0.7831462005838917, -1.3788502516483867, -0.7965692909228245],
-  //     scale: [2.02, 2.02, 2.02],
+  //     position: [-29.981536611355637, 0.8000000000000681, 23.076471941522442],
+  //     rotation: [1.1780253776398548, -1.290981559176644, 1.1638012614052615],
+  //     scale: [1.67, 1.67, 1.67],
   //   },
   // },
+  // {
+  //   name: "Säulenhalle Innensäulen",
+  //   path: "models/Säulenhalle Innensäulen.ply",
+  //   image: "images/Säulenhalle Innensäulen.jpg",
+  //   fov: 24.616032,
+  //   transform: {
+  //     position: [-28.19201895407154, 0.5999999999998437, 24.705276916647115],
+  //     rotation: [2.8974459240641193, -0.8069142741496796, 2.9251997864012367],
+  //     scale: [1, 1, 1],
+  //   },
+  // },
+  // {
+  //   name: "Säulenhalle Seite",
+  //   path: "models/Säulenhalle Seite.ply",
+  //   image: "images/Säulenhalle Seite.jpg",
+  //   fov: 33.096605,
+  //   transform: {
+  //     position: [-19.086429085463013, 0.22429999999974182, 46.80030846711104],
+  //     rotation: [
+  //       0.3660541432364356, 0.016807677946267495, -0.05182080468966712,
+  //     ],
+  //     scale: [1.14, 1.14, 1.14],
+  //   },
+  // },
+  // // {
+  // //   name: "Kennedy 1963",
+  // //   path: "models/Kennedy 1963.ply",
+  // //   image: "images/Kennedy 1963.jpg",
+  // //   fov: 46.808396,
+  // //   transform: {
+  // //     position: [-84.90858839834449, 5.599999999999741, -5.026112292179066],
+  // //     rotation: [-0.7831462005838917, -1.3788502516483867, -0.7965692909228245],
+  // //     scale: [2.02, 2.02, 2.02],
+  // //   },
+  // // },
   {
     name: "Kohl 1989",
     path: "models/Kohl 1989.ply",
@@ -134,7 +134,7 @@ export default [
     },
   },
   {
-    name: "Kennedy 1963 alt",
+    name: "Kennedy 1963",
     fov: 46.808396,
     path: "models/Kennedy 1963 alt.ply",
     image: "images/Kennedy 1963 alt.jpg",
