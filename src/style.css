@@ -1,0 +1,18 @@
+:root {
+}
+
+body {
+  margin: 0;
+}
+
+#app {
+  canvas {
+    position: fixed;
+  }
+}
+
+button {
+  position: relative;
+  display: block;
+  z-index: 5;
+}
