@@ -1,16 +1,30 @@
-import "./style.css";
+// IMPORTS
+//
+// LIBRARIES
+
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { SparkRenderer, SplatMesh } from "@sparkjsdev/spark";
+
+// SCRIPTS
+
 import { DefaultEnvironment } from "./lib/environment";
 import { importGLTF, importPointCloud, importSplat } from "./lib/importers";
-import { SparkRenderer, SplatMesh } from "@sparkjsdev/spark";
-import projections from "./data/projections";
 import {
   getAspectRatio,
   easeInOut,
   getProjectionOccurances,
 } from "./lib/helpers";
 import { loadImages } from "./lib/images";
+import { createStoryHandler } from "./lib/storyHandling";
+
+// DATA
+
+import projections from "./data/projections";
+
+// STYLESHEET
+
+import "./style.css";
 
 // STORIES
 
@@ -25,101 +39,12 @@ const occurances = getProjectionOccurances(stories);
 const raycaster = new THREE.Raycaster();
 
 // VARIABLES
+
 let prevTime = 0;
 
-function mount(container, html) {
-  container.innerHTML = html;
-
-  const appearObserver = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) onAppear(e.target.dataset.projection, e);
-      }
-    },
-    { rootMargin: "-10% 0%" },
-  );
-
-  const focusObserver = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) onEnterFocus(e.target.dataset.projection, e);
-        else onLeaveFocus(e.target.dataset.projection, e);
-      }
-    },
-    { rootMargin: "-40% 0%" },
-  );
-
-  container.querySelectorAll("[data-projection]").forEach((el) => {
-    appearObserver.observe(el);
-    focusObserver.observe(el);
-  });
-
-  return () => {
-    appearObserver.disconnect();
-    container.innerHTML = "";
-  };
-}
-
-let teardown = () => {};
-function show(story, projection) {
-  controls.enableZoom = false;
-  const overlay = document.querySelector("article");
-  teardown();
-  teardown = mount(overlay, stories[story]);
-
-  if (projection) {
-    const el = document.querySelector(
-      `article [data-projection="${projection}"]`,
-    );
-    scrollTo(
-      0,
-      el.getBoundingClientRect().y + window.scrollY - innerHeight * 0.8,
-    );
-  }
-}
-
-function onEnterFocus(projection) {
-  const image = document.querySelector(
-    `.images [data-projection-name="${projection}"]`,
-  );
-  image.style.opacity = 1;
-}
-
-function onLeaveFocus(projection) {
-  const image = document.querySelector(
-    `.images [data-projection-name="${projection}"]`,
-  );
-  image.style.opacity = 0;
-}
-
-function onAppear(projection) {
-  const targetCam = scene
-    .getObjectByName(projection)
-    ?.getObjectByProperty("isPerspectiveCamera", true);
-  if (!targetCam) return;
-
-  const toPos = new THREE.Vector3();
-  const toDir = new THREE.Vector3();
-  targetCam.getWorldPosition(toPos);
-  targetCam.getWorldDirection(toDir);
-
-  const uprightTarget = new THREE.PerspectiveCamera();
-  uprightTarget.lookAt(toDir);
-  const toQuat = uprightTarget.quaternion.clone();
-  // if (camera.quaternion.dot(toQuat) < 0) toQuat.negate();
-
-  transition.fromPos.copy(camera.position);
-  transition.fromQuat.copy(camera.quaternion);
-  transition.fromFov = camera.fov;
-  transition.toPos.copy(toPos);
-  transition.toQuat.copy(toQuat);
-  transition.toFov = targetCam.fov;
-  transition.progress = 0;
-  transition.active = true;
-
-  controls.enabled = false;
-}
-
+// THREE JS
+//
+// SCENE SETUP
 const scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0x000000, 50, 250);
 const camera = new THREE.PerspectiveCamera(
@@ -133,32 +58,30 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.querySelector("#app").appendChild(renderer.domElement);
 
+scene.add(new DefaultEnvironment());
+
+camera.position.x = 25;
+camera.position.y = 25;
+camera.position.z = 25;
+camera.lookAt(0, 0, 0);
+
+// CONTROLS
+
 const controls = new OrbitControls(camera, renderer.domElement);
 
-controls.addEventListener("end", () => {
-  controls.enableZoom = true;
-});
-
-controls.addEventListener("start", () => {
-  teardown();
-  const images = document.querySelectorAll(`.images [data-projection-name]`);
-  for (const image of images) {
-    image.style.opacity = 0;
-  }
-});
-
+// SPARK (FOR GAUSSIAN SPLATS)
 const spark = new SparkRenderer({ renderer });
 scene.add(spark);
 
-camera.position.x = 5;
-camera.position.y = 5;
-camera.position.z = 5;
-
-scene.add(new DefaultEnvironment());
+// MODELS
+//
+// LIDAR
 
 const lidar = await importPointCloud("models/Brandenburger Tor Lidar.ply");
 lidar.position.set(-1.79, -1.01, 12.38);
 scene.add(lidar);
+
+// SPLATS
 
 for (const projection of projections) {
   let group = new THREE.Group();
@@ -179,6 +102,8 @@ for (const projection of projections) {
   // scene.add(helper);
 }
 
+// ANIMATION LOOP
+
 function animate(time) {
   if (transition.active) {
     runTransition(time);
@@ -192,7 +117,6 @@ function animate(time) {
   renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(animate);
-// show("PetraGall");
 
 // TRANSITION
 
@@ -228,6 +152,16 @@ function finalizeTransition() {
   controls.update();
 }
 
+// DOM
+
+const { show, clearStory } = createStoryHandler({
+  scene,
+  camera,
+  transition,
+  controls,
+  stories,
+});
+
 loadImages(projections);
 
 // EVENTS
@@ -257,3 +191,8 @@ window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
 });
+
+// CONTROLS
+
+controls.addEventListener("end", () => (controls.enableZoom = true));
+controls.addEventListener("start", () => clearStory());
