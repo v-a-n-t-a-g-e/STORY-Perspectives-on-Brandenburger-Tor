@@ -4,7 +4,7 @@
 
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { SparkRenderer, SplatMesh } from "@sparkjsdev/spark";
+import { SparkRenderer } from "@sparkjsdev/spark";
 
 // SCRIPTS
 
@@ -14,9 +14,11 @@ import {
   getAspectRatio,
   easeInOut,
   getProjectionOccurances,
+  getMouseVector,
 } from "./lib/helpers";
 import { loadImages } from "./lib/images";
 import { createStoryHandler } from "./lib/storyHandling";
+import { createFrustumMesh, createFrustumWireframe } from "./lib/frustum";
 
 // DATA
 
@@ -68,6 +70,9 @@ camera.lookAt(0, 0, 0);
 // CONTROLS
 
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.zoomSpeed = 2;
+controls.maxDistance = 100;
+// controls.zoomToCursor = true;
 
 // SPARK (FOR GAUSSIAN SPLATS)
 const spark = new SparkRenderer({ renderer });
@@ -83,6 +88,10 @@ scene.add(lidar);
 
 // SPLATS
 
+const frustumMeshes = [];
+const CAM_NEAR = 0.01;
+const CAM_FAR = 17;
+
 for (const projection of projections) {
   let group = new THREE.Group();
   group.name = projection.name;
@@ -95,11 +104,24 @@ for (const projection of projections) {
   group.add(splat);
 
   let ratio = await getAspectRatio(projection.image);
-  let cam = new THREE.PerspectiveCamera(projection.fov, ratio, 5, 20);
+  let cam = new THREE.PerspectiveCamera(
+    projection.fov,
+    ratio,
+    CAM_NEAR,
+    CAM_FAR,
+  );
   group.add(cam);
 
-  // let helper = new THREE.CameraHelper(cam);
-  // scene.add(helper);
+  const frustum = createFrustumMesh(projection.fov, ratio, CAM_NEAR, CAM_FAR);
+  cam.add(frustum);
+  const wireframe = createFrustumWireframe(
+    projection.fov,
+    ratio,
+    CAM_NEAR,
+    CAM_FAR,
+  );
+  cam.add(wireframe);
+  frustumMeshes.push([frustum, wireframe, splat]);
 }
 
 // ANIMATION LOOP
@@ -154,7 +176,7 @@ function finalizeTransition() {
 
 // DOM
 
-const { show, clearStory } = createStoryHandler({
+const { show, clearStory, hideStory, showStory } = createStoryHandler({
   scene,
   camera,
   transition,
@@ -165,23 +187,55 @@ const { show, clearStory } = createStoryHandler({
 loadImages(projections);
 
 // EVENTS
-//
-// DB CLICK
 
-renderer.domElement.addEventListener("dblclick", (event) => {
-  raycaster.setFromCamera(
-    new THREE.Vector2(
-      (event.clientX / renderer.domElement.width) * 2 - 1,
-      -(event.clientY / renderer.domElement.height) * 2 + 1,
-    ),
-    camera,
-  );
-  const intersects = raycaster.intersectObjects(scene.children);
-  const splat = intersects.find((i) => i.object instanceof SplatMesh);
+renderer.domElement.addEventListener("mousemove", (event) => {
+  let hit = null;
+  if (controls.enableZoom && !controlsActive) {
+    raycaster.setFromCamera(getMouseVector(event, renderer.domElement), camera);
+    hit =
+      raycaster.intersectObjects(frustumMeshes.map(([mesh]) => mesh))[0]
+        ?.object ?? null;
+  }
 
-  const projection = splat?.object?.parent?.name;
-  const story = occurances[projection];
-  if (story) show(story, projection);
+  for (const [mesh, helper, splat] of frustumMeshes) {
+    const isHit = mesh === hit;
+    // helper.visible = isHit;
+    mesh.material.opacity = isHit ? 0.05 : 0;
+    splat.opacity = hit && !isHit ? 0.2 : 1;
+  }
+  lidar.material.opacity = hit ? 0.2 : 0.4;
+  renderer.domElement.style.cursor = hit ? "pointer" : "";
+});
+
+const pointerDownPos = new THREE.Vector2();
+
+renderer.domElement.addEventListener("pointerdown", (event) => {
+  pointerDownPos.set(event.clientX, event.clientY);
+});
+
+renderer.domElement.addEventListener("click", (event) => {
+  if (!controls.enableZoom) return;
+  const dx = event.clientX - pointerDownPos.x;
+  const dy = event.clientY - pointerDownPos.y;
+  if (dx * dx + dy * dy > 9) return;
+
+  raycaster.setFromCamera(getMouseVector(event, renderer.domElement), camera);
+  const hit = raycaster.intersectObjects(frustumMeshes.map(([mesh]) => mesh))[0]
+    ?.object;
+  if (!hit) return;
+
+  const projectionName = hit.parent.parent.name;
+  const story = occurances[projectionName];
+  if (story) {
+    for (const [mesh, helper, splat] of frustumMeshes) {
+      // helper.visible = false;
+      mesh.material.opacity = 0;
+      splat.opacity = 1;
+    }
+    lidar.material.opacity = 0.4;
+    renderer.domElement.style.cursor = "";
+    show(story, projectionName);
+  }
 });
 
 // RESIZE
@@ -194,5 +248,25 @@ window.addEventListener("resize", () => {
 
 // CONTROLS
 
-controls.addEventListener("end", () => (controls.enableZoom = true));
-controls.addEventListener("start", () => clearStory());
+const controlsStartPosition = new THREE.Vector3();
+const controlsStartQuaternion = new THREE.Quaternion();
+let controlsActive = false;
+
+controls.addEventListener("start", () => {
+  controlsActive = true;
+  controlsStartPosition.copy(camera.position);
+  controlsStartQuaternion.copy(camera.quaternion);
+  hideStory();
+});
+
+controls.addEventListener("end", () => {
+  controlsActive = false;
+  const moved = camera.position.distanceTo(controlsStartPosition) > 0.5;
+  const rotated = controlsStartQuaternion.angleTo(camera.quaternion) > 0.01;
+  if (moved || rotated) {
+    controls.enableZoom = true;
+    clearStory();
+  } else {
+    showStory();
+  }
+});

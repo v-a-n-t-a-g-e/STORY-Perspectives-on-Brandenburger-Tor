@@ -1,6 +1,12 @@
 import * as THREE from "three";
 
-export function createStoryHandler({ scene, camera, transition, controls, stories }) {
+export function createStoryHandler({
+  scene,
+  camera,
+  transition,
+  controls,
+  stories,
+}) {
   let teardown = () => {};
 
   function mount(container, html) {
@@ -38,6 +44,7 @@ export function createStoryHandler({ scene, camera, transition, controls, storie
 
   function show(story, projection) {
     controls.enableZoom = false;
+    showStory();
     const overlay = document.querySelector("article");
     teardown();
     teardown = mount(overlay, stories[story]);
@@ -101,5 +108,15 @@ export function createStoryHandler({ scene, camera, transition, controls, storie
     for (const image of images) image.style.opacity = 0;
   }
 
-  return { show, clearStory };
+  function hideStory() {
+    document.querySelector("article").style.opacity = 0;
+    const images = (document.querySelector(".images").style.opacity = 0);
+  }
+
+  function showStory() {
+    document.querySelector("article").style.opacity = 1;
+    const images = (document.querySelector(".images").style.opacity = 1);
+  }
+
+  return { show, clearStory, hideStory, showStory };
 }

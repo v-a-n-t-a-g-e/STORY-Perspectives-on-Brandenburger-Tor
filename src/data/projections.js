@@ -133,15 +133,27 @@ export default [
       scale: [1.95, 1.95, 1.95],
     },
   },
+  // {
+  //   name: "Kennedy 1963",
+  //   fov: 46.808396,
+  //   path: "models/Kennedy 1963 alt.ply",
+  //   image: "images/Kennedy 1963 alt.jpg",
+  //   transform: {
+  //     position: [-84.90858839834574, 6.487663337769723, -5.026112292179255],
+  //     rotation: [-0.8899844683132758, -1.346118576174986, -0.9001925975259734],
+  //     scale: [1.99, 1.99, 1.99],
+  //   },
+  // },
   {
-    name: "Kennedy 1963",
-    fov: 46.808396,
-    path: "models/Kennedy 1963 alt.ply",
-    image: "images/Kennedy 1963 alt.jpg",
+    name: "Kennedy 1963 B",
+    fov: 54.204464,
+
+    path: "models/Kennedy 1963 B.ply",
+    image: "images/Kennedy 1963 B.jpg",
     transform: {
-      position: [-84.90858839834574, 6.487663337769723, -5.026112292179255],
-      rotation: [-0.8899844683132758, -1.346118576174986, -0.9001925975259734],
-      scale: [1.99, 1.99, 1.99],
+      position: [-98.32483804629462, 8.979000000715347, 4.173826425879271],
+      rotation: [0.262885780232477, -1.3333583963488465, 0.23142817115836492],
+      scale: [2, 2, 2],
     },
   },
 ];

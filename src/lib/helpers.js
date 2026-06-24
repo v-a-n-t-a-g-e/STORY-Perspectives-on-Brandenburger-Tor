@@ -48,3 +48,10 @@ export function getProjectionOccurances(stories) {
   });
   return occurances;
 }
+
+export function getMouseVector(event, { width, height }) {
+  return new THREE.Vector2(
+    (event.clientX / width) * 2 - 1,
+    -(event.clientY / height) * 2 + 1,
+  );
+}

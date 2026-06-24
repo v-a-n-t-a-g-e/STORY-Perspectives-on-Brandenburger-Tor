@@ -17,6 +17,8 @@ export async function importPointCloud(url) {
   const mat = new THREE.PointsMaterial({
     size: 0.01,
     sizeAttenuation: false,
+    transparent: true,
+    opacity: 0.4,
   });
 
   return new THREE.Points(geometry, mat);
