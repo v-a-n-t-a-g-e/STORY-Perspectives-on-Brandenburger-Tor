@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { PLYLoader } from "three/addons/loaders/PLYLoader.js";
 import { SplatMesh } from "@sparkjsdev/spark";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 
 export function importGLTF(url) {
   const loader = new GLTFLoader();
@@ -11,8 +11,11 @@ export function importGLTF(url) {
 }
 
 export async function importPointCloud(url) {
-  const loader = new PLYLoader();
-  const geometry = await new Promise((resolve) => loader.load(url, resolve));
+  const loader = new DRACOLoader();
+  loader.setDecoderPath("/node_modules/three/examples/jsm/libs/draco/");
+
+  const geometry = await loader.loadAsync(url);
+  // const geometry = await new Promise((resolve) => loader.load(url, resolve));
 
   const mat = new THREE.PointsMaterial({
     size: 0.01,

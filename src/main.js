@@ -81,7 +81,7 @@ scene.add(spark);
 //
 // LIDAR
 
-const lidar = await importPointCloud("models/Brandenburger Tor Lidar.ply");
+const lidar = await importPointCloud("models/Brandenburger Tor Lidar.drc");
 lidar.position.set(-1.79, -1.01, 12.38);
 
 lidar.renderOrder = -1;
