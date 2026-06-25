@@ -12,7 +12,7 @@ export function importGLTF(url) {
 
 export async function importPointCloud(url) {
   const loader = new DRACOLoader();
-  loader.setDecoderPath("/node_modules/three/examples/jsm/libs/draco/");
+  loader.setDecoderPath("./node_modules/three/examples/jsm/libs/draco/");
 
   const geometry = await loader.loadAsync(url);
   // const geometry = await new Promise((resolve) => loader.load(url, resolve));
