@@ -30,13 +30,12 @@ import "./style.css";
 
 // STORIES
 
-import Architektur from "./stories/architektur.html?raw";
 import PetraGall from "./stories/petra_gall.html?raw";
 import Politiker from "./stories/politiker.html?raw";
 
 // CONSTANTS
 
-const stories = { Architektur, PetraGall, Politiker };
+const stories = { PetraGall, Politiker };
 const occurances = getProjectionOccurances(stories);
 const raycaster = new THREE.Raycaster();
 
@@ -84,6 +83,8 @@ scene.add(spark);
 
 const lidar = await importPointCloud("models/Brandenburger Tor Lidar.ply");
 lidar.position.set(-1.79, -1.01, 12.38);
+
+lidar.renderOrder = -1;
 scene.add(lidar);
 
 // SPLATS
@@ -103,6 +104,8 @@ for (const projection of projections) {
   group.scale.set(...projection.transform.scale);
   group.add(splat);
 
+  splat.renderOrder = 10;
+
   let ratio = await getAspectRatio(projection.image);
   let cam = new THREE.PerspectiveCamera(
     projection.fov,
@@ -120,6 +123,7 @@ for (const projection of projections) {
     CAM_NEAR,
     CAM_FAR,
   );
+  wireframe.renderOrder = 10;
   cam.add(wireframe);
   frustumMeshes.push([frustum, wireframe, splat]);
 }
@@ -199,7 +203,7 @@ renderer.domElement.addEventListener("mousemove", (event) => {
 
   for (const [mesh, helper, splat] of frustumMeshes) {
     const isHit = mesh === hit;
-    // helper.visible = isHit;
+    helper.visible = isHit;
     mesh.material.opacity = isHit ? 0.05 : 0;
     splat.opacity = hit && !isHit ? 0.2 : 1;
   }
@@ -228,7 +232,7 @@ renderer.domElement.addEventListener("click", (event) => {
   const story = occurances[projectionName];
   if (story) {
     for (const [mesh, helper, splat] of frustumMeshes) {
-      // helper.visible = false;
+      helper.visible = false;
       mesh.material.opacity = 0;
       splat.opacity = 1;
     }

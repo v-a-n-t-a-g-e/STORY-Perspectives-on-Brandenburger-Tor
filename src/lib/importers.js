@@ -24,7 +24,7 @@ export async function importPointCloud(url) {
   return new THREE.Points(geometry, mat);
 }
 
-export async function importSplat(url, { maxDist = 20, maxSize = 0.02 } = {}) {
+export async function importSplat(url, { maxDist = 20, maxSize = 0.06 } = {}) {
   const original = await new Promise(
     (resolve) => new SplatMesh({ url, onLoad: resolve }),
   );

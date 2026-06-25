@@ -94,7 +94,9 @@ export function createFrustumWireframe(fov, aspect, near, far) {
   const geo = new THREE.EdgesGeometry(
     buildFrustumGeometry(fov, aspect, near, far),
   );
-  const mat = new THREE.LineBasicMaterial({ color: 0x01ff00 });
+  const mat = new THREE.LineBasicMaterial({
+    color: 0xffffff,
+  });
   const wireframe = new THREE.LineSegments(geo, mat);
   wireframe.visible = false;
   return wireframe;
