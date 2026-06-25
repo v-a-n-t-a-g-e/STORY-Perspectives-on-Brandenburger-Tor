@@ -23,6 +23,8 @@ article {
   pointer-events: none;
   gap: 100vh;
   padding: 80vh 0 50vh;
+  text-wrap: pretty;
+  hyphens: auto;
 }
 
 article p {
@@ -48,7 +50,9 @@ article a:hover {
 
 [data-projection] {
   background: white;
-  width: 520px;
+  max-width: 520px;
+  box-sizing: border-box;
+  width: calc(100%);
   padding: 20px;
 }
 
@@ -69,4 +73,21 @@ article a:hover {
     opacity: 0;
     transition: opacity 0.2s;
   }
+}
+
+.explore {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 15;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  padding: 10px;
+  visibility: hidden;
+}
+
+.explore img {
+  width: 20px;
+  height: 20px;
+  display: block;
 }

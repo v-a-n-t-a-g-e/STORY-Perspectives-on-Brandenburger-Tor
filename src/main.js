@@ -242,6 +242,15 @@ renderer.domElement.addEventListener("click", (event) => {
   }
 });
 
+// EXPLORE BUTTON
+document.querySelector(".explore").addEventListener("click", () => {
+  clearStory();
+});
+
+document.querySelector("article").addEventListener("dblclick", () => {
+  clearStory();
+});
+
 // RESIZE
 
 window.addEventListener("resize", () => {

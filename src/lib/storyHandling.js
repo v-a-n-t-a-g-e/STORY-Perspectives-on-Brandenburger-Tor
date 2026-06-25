@@ -46,6 +46,8 @@ export function createStoryHandler({
     controls.enableZoom = false;
     showStory();
     const overlay = document.querySelector("article");
+    document.querySelector(".explore").style.visibility = "visible";
+    overlay.style.pointerEvents = "all";
     teardown();
     teardown = mount(overlay, stories[story]);
 
@@ -103,6 +105,8 @@ export function createStoryHandler({
   }
 
   function clearStory() {
+    document.querySelector("article").style.pointerEvents = "none";
+    document.querySelector(".explore").style.visibility = "hidden";
     teardown();
     const images = document.querySelectorAll(".images [data-projection-name]");
     for (const image of images) image.style.opacity = 0;
