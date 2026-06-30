@@ -90,8 +90,8 @@ scene.add(lidar);
 // SPLATS
 
 const frustumMeshes = [];
-const CAM_NEAR = 0.01;
-const CAM_FAR = 17;
+const CAM_NEAR = 3;
+const CAM_FAR = 5;
 
 for (const projection of projections) {
   let group = new THREE.Group();
